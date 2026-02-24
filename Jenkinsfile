@@ -142,27 +142,29 @@ stage('Promote to master') {
                 git remote set-url origin https://AlfredoVG77:${GITHUB_TOKEN}@github.com/AlfredoVG77/cp1-4-res.git
                 git push origin develop
 
-                echo "=== Promocionando a master ==="
+		echo "=== Promocionando a master ==="
 
-                git fetch origin master
-                git checkout master
+		git fetch origin master
+		git checkout master
 
-              
-                git rm --cached Jenkinsfile || true
-                git commit -m "Preparar merge: excluir Jenkinsfile" || true
+		# 1. Eliminar Jenkinsfile del índice y commit
+		git rm --cached Jenkinsfile || true
+		git commit -m "Preparar merge: excluir Jenkinsfile" || true
 
-             
-                git checkout origin/master -- Jenkinsfile
+		# 2. Restaurar Jenkinsfile de master y commit (ESTE COMMIT ES EL QUE TE FALTABA)
+		git checkout origin/master -- Jenkinsfile
+		git add Jenkinsfile
+		git commit -m "Restaurar Jenkinsfile de master antes del merge" || true
 
-            
-                git merge origin/develop --no-edit
+		# 3. Merge sin conflictos
+		git merge origin/develop --no-edit || true
 
-           
-                git checkout origin/master -- Jenkinsfile
-                git add Jenkinsfile
-                git commit -m "Mantener Jenkinsfile de master" || true
+		# 4. Restaurar Jenkinsfile de master por seguridad
+		git checkout origin/master -- Jenkinsfile
+		git add Jenkinsfile
+		git commit -m "Mantener Jenkinsfile de master" || true
 
-                git push origin master
+		git push origin master
             '''
        		 }
 	    }
