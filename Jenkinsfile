@@ -147,17 +147,17 @@ stage('Promote to master') {
                 git fetch origin master
                 git checkout master
 
-                # 1. Eliminar Jenkinsfile del índice y COMMIT
+              
                 git rm --cached Jenkinsfile || true
                 git commit -m "Preparar merge: excluir Jenkinsfile" || true
 
-                # 2. Restaurar Jenkinsfile de master
+             
                 git checkout origin/master -- Jenkinsfile
 
-                # 3. Merge sin conflictos
+            
                 git merge origin/develop --no-edit
 
-                # 4. Restaurar Jenkinsfile de master por seguridad
+           
                 git checkout origin/master -- Jenkinsfile
                 git add Jenkinsfile
                 git commit -m "Mantener Jenkinsfile de master" || true
